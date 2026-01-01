@@ -1,60 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>LIC Bill Dashboard</title>
+    <meta charset="UTF-8">
+    <title>LIC_Wealth_Report_Vishal_Kumar_Singh</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; margin-bottom: 5px; }
-        .stats { display: flex; justify-content: space-around; background: #3498db; color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        :root {
+            --primary: #003366; --secondary: #00509d; --accent: #ffcc00;
+            --growth: #28a745; --alert: #d32f2f;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; margin: 0; }
+        .bill-card { max-width: 900px; margin: auto; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 25px rgba(0,0,0,0.1); }
+        
+        .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 25px 40px; display: flex; align-items: center; gap: 25px; }
+        .photo-placeholder { width: 100px; height: 125px; border: 3px solid white; border-radius: 4px; background: #eee; display: flex; align-items: center; justify-content: center; color: #666; font-size: 10px; }
+
+        .payment-status { background: #fff9c4; padding: 15px 40px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
+        .sync-badge { background: var(--growth); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 12px; }
+
+        .content { padding: 25px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: #7f8c8d; }
-        .status-pill { background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        th { background: #f1f5f9; color: var(--primary); padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; }
+        td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; }
+        td:first-child::before { content: "• "; color: var(--secondary); font-weight: bold; }
+
+        .motivation-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; padding: 25px; background: #fafafa; }
+        .m-card { padding: 12px; border-radius: 10px; font-size: 11px; line-height: 1.4; border: 1px solid #e0e0e0; }
+        .m-card h4 { margin: 0 0 5px 0; color: var(--primary); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📊 LIC Payment Tracker</h1>
-        <p style="text-align: center; color: #7f8c8d;">Automated tracking for vs0160748@gmail.com</p>
-        
-        <div class="stats">
-            <div><strong>Total Payments:</strong> <span id="count">0</span></div>
-            <div><strong>Status:</strong> <span id="sync-status">Syncing...</span></div>
-        </div>
 
-        <table id="billTable">
+<div class="bill-card">
+    <div class="header">
+        <div class="photo-placeholder">PHOTO</div>
+        <div class="header-text">
+            <h1 style="margin:0;">Wealth & Protection Dashboard</h1>
+            <p style="margin:5px 0;">Vishal Kumar Singh | Portfolio Manager</p>
+            <div style="font-size: 10px; opacity: 0.8;">Automated Tracking for vs0160748@gmail.com</div>
+        </div>
+    </div>
+
+    <div class="payment-status">
+        <div><strong>Live Portfolio Status</strong></div>
+        <div id="status-box" class="sync-badge">SYNCING...</div>
+    </div>
+
+    <div class="content">
+        <table>
             <thead>
-                <tr><th>Date</th><th>Bill Description</th><th>Status</th></tr>
+                <tr><th>Policy Details (From Email)</th><th>Date Received</th><th>Status</th></tr>
             </thead>
             <tbody id="tableBody"></tbody>
         </table>
     </div>
 
-    <script>
-        fetch('bills.json')
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById('tableBody');
-                document.getElementById('count').innerText = data.length;
-                document.getElementById('sync-status').innerText = "Live ✅";
-                
-                if(data.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='3' style='text-align:center'>No bills found in your email yet.</td></tr>";
-                    return;
-                }
+    <div class="motivation-grid">
+        <div class="m-card" style="background: #fdf2f2; border-left: 4px solid #d32f2f;">
+            <h4>🧠 Money Discipline</h4>
+            Automation shows you have the <strong>discipline of the 1%</strong>. Freedom is won by small actions.
+        </div>
+        <div class="m-card" style="background: #f0fdf4; border-left: 4px solid #16a34a;">
+            <h4>🌱 Seed of Growth</h4>
+            Every bill tracked is a step toward security. You are planting a forest of financial stability.
+        </div>
+        <div class="m-card" style="background: #eff6ff; border-left: 4px solid #2563eb;">
+            <h4>🎓 Career Growth</h4>
+            Building this as a BCA student demonstrates your ability to combine <strong>DevOps</strong> with <strong>UI/UX</strong>.
+        </div>
+    </div>
+</div>
 
-                data.forEach(bill => {
-                    tbody.innerHTML += `<tr>
-                        <td>${new Date(bill.date).toLocaleDateString()}</td>
-                        <td>${bill.subject}</td>
-                        <td><span class="status-pill">Paid</span></td>
-                    </tr>`;
-                });
-            })
-            .catch(err => {
-                document.getElementById('tableBody').innerHTML = "<tr><td colspan='3' style='text-align:center'>Waiting for first automation run...</td></tr>";
+<script>
+    fetch('bills.json')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('tableBody');
+            document.getElementById('status-box').innerText = "LIVE ✅";
+            
+            if(data.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='3' style='text-align:center'>No bills found yet. Run your GitHub Action to fetch data.</td></tr>";
+                return;
+            }
+
+            data.forEach(bill => {
+                tbody.innerHTML += `<tr>
+                    <td>${bill.subject}</td>
+                    <td>${new Date(bill.date).toLocaleDateString()}</td>
+                    <td><span style="color:var(--growth); font-weight:bold;">RECEIVED</span></td>
+                </tr>`;
             });
-    </script>
+        })
+        .catch(err => {
+            document.getElementById('tableBody').innerHTML = "<tr><td colspan='3' style='text-align:center'>Waiting for first automation run...</td></tr>";
+        });
+</script>
+
 </body>
 </html>
