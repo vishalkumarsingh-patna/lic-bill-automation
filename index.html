@@ -11,17 +11,29 @@
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; padding: 20px; margin: 0; }
         .bill-card { max-width: 900px; margin: auto; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 25px rgba(0,0,0,0.1); }
         
+        /* Header and Photo */
         .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 25px 40px; display: flex; align-items: center; gap: 25px; }
-        .photo-placeholder { width: 100px; height: 125px; border: 3px solid white; border-radius: 4px; background: #eee; display: flex; align-items: center; justify-content: center; color: #666; font-size: 10px; }
+        .photo-container { width: 100px; height: 125px; border: 3px solid white; border-radius: 4px; overflow: hidden; background: #fff; }
+        .photo-container img { width: 100%; height: 100%; object-fit: cover; }
 
         .payment-status { background: #fff9c4; padding: 15px 40px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
         .sync-badge { background: var(--growth); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 12px; }
 
-        .content { padding: 25px; }
+        /* Statistics Bar */
+        .stats-bar { display: flex; justify-content: space-around; background: #eef2f7; padding: 15px; font-weight: bold; color: var(--primary); }
+
+        .content { padding: 25px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #f1f5f9; color: var(--primary); padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; }
         td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; }
-        td:first-child::before { content: "• "; color: var(--secondary); font-weight: bold; }
+
+        /* Calculator Styles */
+        .calc-container { background: #333; padding: 20px; border-radius: 15px; color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .calc-display { width: 100%; height: 50px; background: #444; border: none; margin-bottom: 10px; color: #fff; text-align: right; padding: 10px; font-size: 20px; box-sizing: border-box; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .calc-btn { padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; background: #666; color: white; }
+        .calc-btn.op { background: var(--accent); color: black; }
+        .calc-btn.eq { background: var(--growth); grid-column: span 2; }
 
         .motivation-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; padding: 25px; background: #fafafa; }
         .m-card { padding: 12px; border-radius: 10px; font-size: 11px; line-height: 1.4; border: 1px solid #e0e0e0; }
@@ -32,7 +44,8 @@
 
 <div class="bill-card">
     <div class="header">
-        <div class="photo-placeholder">PHOTO</div>
+        <div class="photo-container">
+            <img src="img_vishal.jpg" alt="PHOTO"> </div>
         <div class="header-text">
             <h1 style="margin:0;">Wealth & Protection Dashboard</h1>
             <p style="margin:5px 0;">Vishal Kumar Singh | Portfolio Manager</p>
@@ -45,54 +58,102 @@
         <div id="status-box" class="sync-badge">SYNCING...</div>
     </div>
 
+    <div class="stats-bar">
+        <div>Total Payments Tracked: <span id="bill-count">0</span></div>
+        <div style="color: var(--growth);">Estimated Total Sum: ₹<span id="total-sum">0.00</span></div>
+    </div>
+
     <div class="content">
-        <table>
-            <thead>
-                <tr><th>Policy Details (From Email)</th><th>Date Received</th><th>Status</th></tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+        <div class="table-area">
+            <table>
+                <thead>
+                    <tr><th>Policy Details</th><th>Date Received</th><th>Status</th></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="calc-area">
+            <div class="calc-container">
+                <input type="text" id="display" class="calc-display" disabled value="0">
+                <div class="calc-grid">
+                    <button class="calc-btn" onclick="clearCalc()">C</button>
+                    <button class="calc-btn op" onclick="appendOp('/')">÷</button>
+                    <button class="calc-btn op" onclick="appendOp('*')">×</button>
+                    <button class="calc-btn op" onclick="backspace()">⌫</button>
+                    
+                    <button class="calc-btn" onclick="appendNum('7')">7</button>
+                    <button class="calc-btn" onclick="appendNum('8')">8</button>
+                    <button class="calc-btn" onclick="appendNum('9')">9</button>
+                    <button class="calc-btn op" onclick="appendOp('-')">-</button>
+                    
+                    <button class="calc-btn" onclick="appendNum('4')">4</button>
+                    <button class="calc-btn" onclick="appendNum('5')">5</button>
+                    <button class="calc-btn" onclick="appendNum('6')">6</button>
+                    <button class="calc-btn op" onclick="appendOp('+')">+</button>
+                    
+                    <button class="calc-btn" onclick="appendNum('1')">1</button>
+                    <button class="calc-btn" onclick="appendNum('2')">2</button>
+                    <button class="calc-btn" onclick="appendNum('3')">3</button>
+                    <button class="calc-btn eq" onclick="calculate()">=</button>
+                    
+                    <button class="calc-btn" style="grid-column: span 2;" onclick="appendNum('0')">0</button>
+                    <button class="calc-btn" onclick="appendNum('.')">.</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="motivation-grid">
         <div class="m-card" style="background: #fdf2f2; border-left: 4px solid #d32f2f;">
             <h4>🧠 Money Discipline</h4>
-            Automation shows you have the <strong>discipline of the 1%</strong>. Freedom is won by small actions.
+            Automation shows you have the <strong>discipline of the 1%</strong>.
         </div>
         <div class="m-card" style="background: #f0fdf4; border-left: 4px solid #16a34a;">
             <h4>🌱 Seed of Growth</h4>
-            Every bill tracked is a step toward security. You are planting a forest of financial stability.
+            You are planting a forest of financial stability for your family.
         </div>
         <div class="m-card" style="background: #eff6ff; border-left: 4px solid #2563eb;">
             <h4>🎓 Career Growth</h4>
-            Building this as a BCA student demonstrates your ability to combine <strong>DevOps</strong> with <strong>UI/UX</strong>.
+            Building this as a BCA student combines <strong>DevOps</strong> with <strong>UI/UX</strong>.
         </div>
     </div>
 </div>
 
 <script>
+    // 1. BILL FETCHING & SUMMING
     fetch('bills.json')
         .then(res => res.json())
         .then(data => {
             const tbody = document.getElementById('tableBody');
             document.getElementById('status-box').innerText = "LIVE ✅";
+            document.getElementById('bill-count').innerText = data.length;
             
-            if(data.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='3' style='text-align:center'>No bills found yet. Run your GitHub Action to fetch data.</td></tr>";
-                return;
-            }
-
+            let totalSum = 0;
             data.forEach(bill => {
+                // Extracts numbers from subject line for the Sum feature
+                const amount = parseFloat(bill.subject.replace(/[^0-9.]/g, '')) || 0;
+                totalSum += amount;
+
                 tbody.innerHTML += `<tr>
                     <td>${bill.subject}</td>
                     <td>${new Date(bill.date).toLocaleDateString()}</td>
                     <td><span style="color:var(--growth); font-weight:bold;">RECEIVED</span></td>
                 </tr>`;
             });
+            document.getElementById('total-sum').innerText = totalSum.toLocaleString('en-IN');
         })
         .catch(err => {
-            document.getElementById('tableBody').innerHTML = "<tr><td colspan='3' style='text-align:center'>Waiting for first automation run...</td></tr>";
+            document.getElementById('tableBody').innerHTML = "<tr><td colspan='3' style='text-align:center'>Run your automation to see data.</td></tr>";
         });
+
+    // 2. CALCULATOR LOGIC
+    let display = document.getElementById('display');
+    function appendNum(num) { if(display.value === '0') display.value = num; else display.value += num; }
+    function appendOp(op) { display.value += op; }
+    function clearCalc() { display.value = '0'; }
+    function backspace() { display.value = display.value.slice(0, -1) || '0'; }
+    function calculate() { try { display.value = eval(display.value); } catch(e) { display.value = 'Error'; } }
 </script>
 
 </body>
